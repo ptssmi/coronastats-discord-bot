@@ -1,4 +1,4 @@
-In order to get this bot running correctly do the following:
+In order to create a simliar bot on your machine, do the following:
 
 1. install python 3.5 or above
 
@@ -15,4 +15,6 @@ pip install matplotlib
 Run WebScraper.py
 Run coronastats.py
 
-6. Enjoy!
+To add the official bot to your server paste this url in your searchbar:
+
+https://discordapp.com/api/oauth2/authorize?client_id=700444571565555773&permissions=0&scope=bot
