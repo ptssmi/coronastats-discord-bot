@@ -1,4 +1,4 @@
-# Import library
+# Import libraries
 import discord
 import urllib.request, json
 import matplotlib.pyplot as plt
@@ -10,27 +10,23 @@ import re
 import os
 from os import path
 
-import numpy as np
-
-
-
-
-
-
 #reads in token from .txt file
 token = open("token.txt", "r").read()
 client = discord.Client()
 
-#reads in source data from .txt file
-file1 = open("datastorage.txt","r+")
-content = file1.read()
-file1.close()
+#opens .txt file containing data
+def fileread():
+    #reads in source data from .txt file
+    file1 = open("datastorage.txt","r+")
+    content = file1.read()
+    file1.close()
+    return content
 
 #function for organizing data
 def statsgrabber(country):
     country = specialcases(country)
     countrycap = capitalize(country)
-    data = json.loads(content)
+    data = json.loads(fileread())
     #tests to see if data exits for entered country
     try:
         data[countrycap]
@@ -91,7 +87,7 @@ def plotter(format,country):
     #formats for .json file
     countrycap = capitalize(country)
     #loads content
-    data = json.loads(content)
+    data = json.loads(fileread())
     #sees if country exists
     try:
         
