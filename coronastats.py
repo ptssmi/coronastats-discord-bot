@@ -76,7 +76,7 @@ def specialcases(input):
     return output
 
 #function for plotting data
-def plotter(format,country):
+def plotter(country):
     #initializes arrays
     dates = []
     confirms = []
@@ -112,55 +112,55 @@ def plotter(format,country):
 
         fig, ax1 = plt.subplots()
 
-        
-
-
         #plots data for last 30 days
-        if format == "last30":
+        #if format == "last30":
             #converts data in date format for last 30 days
-            xaxisdates = mdates.num2date(mdates.datestr2num(dates[-30:-1]))
-            ax1.plot(xaxisdates,confirms[-30:-1], label = "Currently Infected")
-            ax1.plot(xaxisdates,recovers[-30:-1], label = "Recovered")
-            ax1.plot(xaxisdates,deaths[-30:-1], label = "Deaths")
-            plt.title("coronastatsvirus in " + countrycap + " for the last 30 days")
-            #plots data
-            fig.autofmt_xdate()
-            plt.ylabel("People")
-            plt.xlabel("Date")
-            plt.grid()
-            plt.legend()
-            
-            #saves plot to .png file
-            plt.savefig("plot.png")
+        xaxisdates = mdates.num2date(mdates.datestr2num(dates[-30:-1]))
+        ax1.plot(xaxisdates,confirms[-30:-1], label = "Currently Infected")
+        ax1.plot(xaxisdates,recovers[-30:-1], label = "Recovered")
+        ax1.plot(xaxisdates,deaths[-30:-1], label = "Deaths")
+        plt.title("Coronavirus in " + countrycap + " for the last 30 days")
+        #plots data
+        fig.autofmt_xdate()
+        plt.ylabel("People")
+        plt.xlabel("Date")
+        plt.grid()
+        plt.legend()  
+        #saves plot to .png file
+        plt.savefig("plot.png")
         #plots data for total time
-        elif format == "total":
-            xaxisdates = mdates.num2date(mdates.datestr2num(dates))
-            ax1.plot(xaxisdates,confirms, label = "Currently Infected")
-            ax1.plot(xaxisdates,recovers, label = "Recovered")
-            ax1.plot(xaxisdates,deaths, label = "Deaths")
-            plt.title("coronastatsvirus in " + countrycap + " Total")
-            #plots data
-            #fig.autofmt_xdate()
-            #plt.xaxis.set_major_locator(xaxisdates)
-            fig.autofmt_xdate()
-            plt.ylabel("People")
-            plt.xlabel("Date")
-            plt.grid()
-            plt.legend()
-            #saves plot to .png file
-            plt.savefig("plot.png")
-        else:
-            #gets rid of old plot
-            os.remove("plot.png")
-            return
+        # elif format == "total":
+        #     xaxisdates = mdates.num2date(mdates.datestr2num(dates))
+        #     ax1.plot(xaxisdates,confirms, label = "Currently Infected")
+        #     ax1.plot(xaxisdates,recovers, label = "Recovered")
+        #     ax1.plot(xaxisdates,deaths, label = "Deaths")
+        #     plt.title("Coronavirus in " + countrycap + " Total")
+        #     plots data
+        #     fig.autofmt_xdate()
+        #     plt.xaxis.set_major_locator(xaxisdates)
+        #     fig.autofmt_xdate()
+        #     plt.ylabel("People")
+        #     plt.xlabel("Date")
+        #     plt.grid()
+        #     plt.legend()
+        #     saves plot to .png file
+        #     plt.savefig("plot.png")
+        # else:
+        #     gets rid of old plot
+        #     os.remove("plot.png")
+        #     return
     #if no data for country exits
     except:
-        return
+        try:
+            os.remove("plot.png")
+            return
+        except:
+            return
 
 
 #function for displaying help menu
 def helper():
-    output = "Commands: \n !coronastats => generates statistics with default country as US \n !coronastats (country) => to generate statistics for given country \n !coronastats plot last30 (country) => Generates plot for last thirty days or since first case for given country \n"
+    output = "**Commands:** ```!coronastats => generates statistics with default country as US \n!coronastats (country) => generates statistics for given country \n!coronastats plot => generates plot of last thirty days with default country as US\n!coronastats plot (country) => generates plot for last thirty days for the given country```\n"
     return output
 
 @client.event
@@ -186,11 +186,11 @@ async def on_message(message):
     #runs default code for !coronastats
     if val[0] == "!coronastats" and len(val) != 1 :
         if val[1] == "plot":       
-            if len(val) > 3:
-                for i in range(3,len(val)) : 
+            if len(val) > 2:
+                for i in range(2,len(val)) : 
                     countrycontent.append(val[i]) 
                 countrycontent = " ".join(countrycontent)
-                plotter(val[2],countrycontent)
+                plotter(countrycontent)
                 #checks to see if plot exists
                 if path.exists('plot.png'):
                     await message.channel.send(file=discord.File('plot.png'))
@@ -199,7 +199,7 @@ async def on_message(message):
                     await message.channel.send("No statistics for " + capitalize(countrycontent) + ".")
             #runs default plot code
             else:
-                plotter("total","united states")
+                plotter("united states")
                 await message.channel.send(file=discord.File('plot.png'))
         #prints stats for inputted country
         else:
