@@ -9,6 +9,8 @@ from discord.ext import commands
 import re
 import os
 from os import path
+import csv
+import numpy as np
 
 #reads in token from .txt file
 token = open("token.txt", "r").read()
@@ -21,6 +23,135 @@ def fileread():
     content = file1.read()
     file1.close()
     return content
+
+def csvcountyread(county,state):
+    with open('countydata.txt', 'r') as file2:
+        reader = csv.reader(file2)
+        state = capitalize(state)
+        county = capitalize(county)
+        for row in reversed(list(reader)):
+            date = str(row[0])
+            if row[0] == date:
+                if row[1] == county:
+                    if row[2] == state:
+                            cases = str(row[4])
+                            deaths = str(row[5])
+                            return "State: " + state + "\n" + "County: " + county + "\n" + "Active Cases: " + cases + "\n" + "Deaths: " + deaths
+
+def csvstateread(state):
+    with open('statedata.txt', 'r') as file3:
+        reader = csv.reader(file3)
+        state = capitalize(state)
+        for row in reversed(list(reader)):
+            date = str(row[0])
+            if row[0] == date:
+                if row[1] == state:
+                    cases = str(row[3])
+                    deaths = str(row[4])
+                    return "State: " + state + "\n" + "Active Cases: " + cases + "\n" + "Deaths: " + deaths
+
+def csvstateplot(state):
+    with open('statedata.txt', 'r') as file3:
+        dates = []
+        cases = []
+        deaths = []
+        reader = csv.reader(file3)
+        state = capitalize(state)
+        for row in list(reader):
+                if row[1] == state:
+                    date = row[0]
+                    dates.append(date)
+                    case = row[3]
+                    cases.append(case)
+                    death = row[4]
+                    deaths.append(death)
+        #case for if an invalid state is entered
+        if cases == []:
+            if path.exists('plot.png'):
+                os.remove("plot.png")
+                return
+            else:
+                return
+        else:
+            
+            try:
+                #converts list of strings to list of ints
+                cases = list(map(int, cases))
+                deaths = list(map(int, deaths))
+                dates = mdates.num2date(mdates.datestr2num(dates[-30:]))
+                #clears out old data 
+                plt.clf()
+                fig, ax1 = plt.subplots()
+                #plots data
+                ax1.plot(dates,cases[-30:], label = "Currently Infected")
+                ax1.plot(dates,deaths[-30:], label = "Deaths")
+                plt.title("Coronavirus in " + state + " for the last 30 days")
+                fig.autofmt_xdate()
+                plt.ylabel("People")
+                plt.xlabel("Date")
+                plt.grid()
+                plt.legend()
+                #saves plot to .png file
+                plt.savefig("plot.png")
+            except:
+                try:
+                    os.remove("plot.png")
+                    return
+                except:
+                    return
+
+def csvcountyplot(county,state):
+    with open('countydata.txt', 'r') as file3:
+        dates = []
+        cases = []
+        deaths = []
+        reader = csv.reader(file3)
+        state = capitalize(state)
+        county = capitalize(county)
+        for row in list(reader):
+               if row[1] == county:
+                    if row[2] == state:
+                        date = row[0]
+                        dates.append(date)
+                        case = row[4]
+                        cases.append(case)
+                        death = row[5]
+                        deaths.append(death)
+                        
+        #case for if an invalid state is entered
+        if cases == []:
+            if path.exists('plot.png'):
+                os.remove("plot.png")
+                return
+            else:
+                return
+        else:
+            
+            try:
+                #converts list of strings to list of ints
+                cases = list(map(int, cases))
+                deaths = list(map(int, deaths))
+                dates = mdates.num2date(mdates.datestr2num(dates[-30:]))
+                #clears out old data 
+                plt.clf()
+                fig, ax1 = plt.subplots()
+                #plots data
+                ax1.plot(dates,cases[-30:], label = "Currently Infected")
+                ax1.plot(dates,deaths[-30:], label = "Deaths")
+                plt.title("Coronavirus in " + county + " County " + state + " for the last 30 days")
+                fig.autofmt_xdate()
+                plt.ylabel("People")
+                plt.xlabel("Date")
+                plt.grid()
+                plt.legend()
+                #saves plot to .png file
+                plt.savefig("plot.png")
+            except:
+                try:
+                    os.remove("plot.png")
+                    return
+                except:
+                    return
 
 #function for organizing data
 def statsgrabber(country):
@@ -42,7 +173,7 @@ def formatter(country, stats):
     if stats == "Invalid":
         output = "No statistics for " + countrycap + "."
     else:
-        output = "Country: {0}\nConfirmed: {1}\nDeaths: {2}\nRecovered: {3}\n".format(countrycap, "{:,}".format(stats[0]),"{:,}".format(stats[1]),"{:,}".format(stats[2]))
+        output = "{0}\nConfirmed: {1}\nDeaths: {2}\nRecovered: {3}\n".format(countrycap, "{:,}".format(stats[0]),"{:,}".format(stats[1]),"{:,}".format(stats[2]))
     return output
 
 #function that ignores capitalization of specific characters
@@ -113,12 +244,12 @@ def plotter(country):
         fig, ax1 = plt.subplots()
 
         #plots data for last 30 days
-        #if format == "last30":
-            #converts data in date format for last 30 days
-        xaxisdates = mdates.num2date(mdates.datestr2num(dates[-30:-1]))
-        ax1.plot(xaxisdates,confirms[-30:-1], label = "Currently Infected")
-        ax1.plot(xaxisdates,recovers[-30:-1], label = "Recovered")
-        ax1.plot(xaxisdates,deaths[-30:-1], label = "Deaths")
+
+        #converts data in date format for last 30 days
+        xaxisdates = mdates.num2date(mdates.datestr2num(dates[-30:]))
+        ax1.plot(xaxisdates,confirms[-30:], label = "Currently Infected")
+        ax1.plot(xaxisdates,recovers[-30:], label = "Recovered")
+        ax1.plot(xaxisdates,deaths[-30:], label = "Deaths")
         plt.title("Coronavirus in " + countrycap + " for the last 30 days")
         #plots data
         fig.autofmt_xdate()
@@ -128,27 +259,7 @@ def plotter(country):
         plt.legend()  
         #saves plot to .png file
         plt.savefig("plot.png")
-        #plots data for total time
-        # elif format == "total":
-        #     xaxisdates = mdates.num2date(mdates.datestr2num(dates))
-        #     ax1.plot(xaxisdates,confirms, label = "Currently Infected")
-        #     ax1.plot(xaxisdates,recovers, label = "Recovered")
-        #     ax1.plot(xaxisdates,deaths, label = "Deaths")
-        #     plt.title("Coronavirus in " + countrycap + " Total")
-        #     plots data
-        #     fig.autofmt_xdate()
-        #     plt.xaxis.set_major_locator(xaxisdates)
-        #     fig.autofmt_xdate()
-        #     plt.ylabel("People")
-        #     plt.xlabel("Date")
-        #     plt.grid()
-        #     plt.legend()
-        #     saves plot to .png file
-        #     plt.savefig("plot.png")
-        # else:
-        #     gets rid of old plot
-        #     os.remove("plot.png")
-        #     return
+
     #if no data for country exits
     except:
         try:
@@ -160,7 +271,7 @@ def plotter(country):
 
 #function for displaying help menu
 def helper():
-    output = "**Commands:** ```!coronastats => generates statistics with default country as US \n!coronastats (country) => generates statistics for given country \n!coronastats plot => generates plot of last thirty days with default country as US\n!coronastats plot (country) => generates plot for last thirty days for the given country```\n"
+    output = "**Commands:** ```!coronastats => generates statistics with default country as US``````!coronastats (country) => generates statistics for given country``````!coronastats state (state) => generates statistics for given state``````!coronastats state plot (state) => generates a plot of the last thirty days for the``````!coronastats county (county) (state) => generates statistics for the given county and state``````!coronastats county plot (county) (state) => generates plot for the last thirty days of the given county and state``````!coronastats plot => generates plot of last thirty days with default country as US``````!coronastats plot (country) => generates plot for last thirty days for the given country```"
     return output
 
 @client.event
@@ -170,16 +281,18 @@ async def on_ready():
     #sets bot status
     game = discord.Game("!help for commands")
     await client.change_presence(status=discord.Status.online, activity=game)
+
     return
 
 #Every message sent will prompt this code to run
 @client.event
-async def on_message(message): 
+async def on_message(message):
 
     #splits up message
     val = message.content.lower().split(" ")
     #inializes array
     countrycontent = []
+    statecontent = []
     #runs with !help is first value of message
     if val[0] == "!help":
         await message.channel.send(helper())
@@ -201,6 +314,77 @@ async def on_message(message):
             else:
                 plotter("united states")
                 await message.channel.send(file=discord.File('plot.png'))
+        elif val[1] == "county":
+            if val[2] == "plot":
+                if len(val) == 5:
+                    csvcountyplot(val[3],val[4])
+                    if path.exists('plot.png'):
+                        await message.channel.send(file=discord.File('plot.png'))
+                    else:
+                    #if no data is found for entered country 
+                        await message.channel.send("No statistics for " + capitalize(val[3]) + ".")
+
+                elif len(val) > 5:
+                    for i in range(4,len(val)):
+                        statecontent.append(val[i]) 
+                    statecontent = " ".join(statecontent)
+                    csvcountyplot(val[3],statecontent)
+                    if path.exists('plot.png'):
+                        await message.channel.send(file=discord.File('plot.png'))
+                    else:
+                        await message.channel.send("Please enter a valid state.")
+
+            else:
+                if len(val) == 4:
+                    try:
+                        await message.channel.send(csvcountyread(val[2],val[3]))
+                    except:
+                        await message.channel.send("Please enter a valid county and state.")
+
+                elif len(val) > 4:
+                    for i in range(3,len(val)) : 
+                        statecontent.append(val[i]) 
+                    statecontent = " ".join(statecontent)
+                    try:
+                        await message.channel.send(csvcountyread(val[2],statecontent))
+                    except:
+                        await message.channel.send("Please enter a valid county and state.")
+
+        elif val[1] == "state":
+            if val[2] == "plot":
+                if len(val) == 4:
+                    csvstateplot(val[3])
+                    if path.exists('plot.png'):
+                        await message.channel.send(file=discord.File('plot.png'))
+                    else:
+                    #if no data is found for entered country 
+                        await message.channel.send("No statistics for " + capitalize(val[3]) + ".")
+
+                elif len(val) > 4:
+                    for i in range(3,len(val)):
+                        statecontent.append(val[i]) 
+                    statecontent = " ".join(statecontent)
+                    csvstateplot(statecontent)
+                    if path.exists('plot.png'):
+                        await message.channel.send(file=discord.File('plot.png'))
+                    else:
+                        await message.channel.send("Please enter a valid state.")
+            else:
+                if len(val) == 3:
+                    try:
+                        await message.channel.send(csvstateread(val[2]))
+                    except:
+                        await message.channel.send("Please enter a valid state.")
+
+                elif len(val) > 3:
+                    for i in range(2,len(val)):
+                        statecontent.append(val[i]) 
+                    statecontent = " ".join(statecontent)
+                    try:
+                        await message.channel.send(csvstateread(statecontent))
+                    except:
+                        await message.channel.send("Please enter a valid state.")
+
         #prints stats for inputted country
         else:
             for i in range(1,len(val)) : 
@@ -210,7 +394,7 @@ async def on_message(message):
     #default data
     elif val[0] == "!coronastats" and len(val) == 1:
         await message.channel.send(formatter("united states", statsgrabber("united states")))
-        
+            
     return
 
 client.run(token)
