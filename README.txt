@@ -7,13 +7,11 @@ pip install bs4
 pip install -U discord.py
 pip install matplotlib
 
-3. Create a .txt file named datastorage.txt
+3. Paste your own discord token into a file called token.txt
 
-4. Create a .txt file named token.txt and store your personal discord bot token in it
-
-5. Run the following scripts at the same time
-Run WebScraper.py
-Run coronastats.py
+4. Run the following files at the same time
+WebScraper.py
+coronastats.py
 
 To add the official bot to your server paste this url in your searchbar:
 
