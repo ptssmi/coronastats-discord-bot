@@ -16,7 +16,7 @@ import numpy as np
 token = open("token.txt", "r").read()
 client = discord.Client()
 
-#opens .txt file containing data
+#opens .txt file containing country data and populates it into the program
 def fileread():
     #reads in source data from .txt file
     file1 = open("datastorage.txt","r+")
@@ -24,6 +24,7 @@ def fileread():
     file1.close()
     return content
 
+#reads in data from file and filters dependent on inputted county and state
 def csvcountyread(county,state):
     with open('countydata.txt', 'r') as file2:
         reader = csv.reader(file2)
@@ -34,10 +35,11 @@ def csvcountyread(county,state):
             if row[0] == date:
                 if row[1] == county:
                     if row[2] == state:
-                            cases = str(row[4])
-                            deaths = str(row[5])
-                            return "State: " + state + "\n" + "County: " + county + "\n" + "Active Cases: " + cases + "\n" + "Deaths: " + deaths
+                            cases = int(row[4])
+                            deaths = int(row[5])
+                            return "State: " + state + "\n" + "County: " + county + "\n" + "Active Cases: " + format (cases, ',d') + "\n" + "Deaths: " + format (deaths, ',d')
 
+#reads in data from state file and filters dependent on inputted state
 def csvstateread(state):
     with open('statedata.txt', 'r') as file3:
         reader = csv.reader(file3)
@@ -46,10 +48,11 @@ def csvstateread(state):
             date = str(row[0])
             if row[0] == date:
                 if row[1] == state:
-                    cases = str(row[3])
-                    deaths = str(row[4])
-                    return "State: " + state + "\n" + "Active Cases: " + cases + "\n" + "Deaths: " + deaths
+                    cases = int(row[3])
+                    deaths = int(row[4])
+                    return "State: " + state + "\n" + "Active Cases: " + format (cases, ',d') + "\n" + "Deaths: " + format (deaths, ',d')
 
+#plots data dpending on which state is inputted
 def csvstateplot(state):
     with open('statedata.txt', 'r') as file3:
         dates = []
@@ -57,6 +60,7 @@ def csvstateplot(state):
         deaths = []
         reader = csv.reader(file3)
         state = capitalize(state)
+        #finds the inputted state data
         for row in list(reader):
                 if row[1] == state:
                     date = row[0]
@@ -100,6 +104,7 @@ def csvstateplot(state):
                 except:
                     return
 
+#plots data depending on county and state inputted
 def csvcountyplot(county,state):
     with open('countydata.txt', 'r') as file3:
         dates = []
@@ -108,6 +113,7 @@ def csvcountyplot(county,state):
         reader = csv.reader(file3)
         state = capitalize(state)
         county = capitalize(county)
+        #finds the inputted county and state data
         for row in list(reader):
                if row[1] == county:
                     if row[2] == state:
@@ -153,7 +159,7 @@ def csvcountyplot(county,state):
                 except:
                     return
 
-#function for organizing data
+#function for organizing data for discord output
 def statsgrabber(country):
     country = specialcases(country)
     countrycap = capitalize(country)
@@ -281,7 +287,6 @@ async def on_ready():
     #sets bot status
     game = discord.Game("!help for commands")
     await client.change_presence(status=discord.Status.online, activity=game)
-
     return
 
 #Every message sent will prompt this code to run
@@ -316,50 +321,58 @@ async def on_message(message):
                 await message.channel.send(file=discord.File('plot.png'))
         elif val[1] == "county":
             if val[2] == "plot":
+                #case for if state is one word
                 if len(val) == 5:
                     csvcountyplot(val[3],val[4])
+                    #checks to see if plot has been created
                     if path.exists('plot.png'):
                         await message.channel.send(file=discord.File('plot.png'))
                     else:
                     #if no data is found for entered country 
                         await message.channel.send("No statistics for " + capitalize(val[3]) + ".")
-
+                #case for if state is more than one word
                 elif len(val) > 5:
                     for i in range(4,len(val)):
                         statecontent.append(val[i]) 
                     statecontent = " ".join(statecontent)
                     csvcountyplot(val[3],statecontent)
+                    #checks to see if plot has been created
                     if path.exists('plot.png'):
                         await message.channel.send(file=discord.File('plot.png'))
                     else:
                         await message.channel.send("Please enter a valid state.")
-
+            #command for printing county data
             else:
+                #case for if state is one word
                 if len(val) == 4:
                     try:
                         await message.channel.send(csvcountyread(val[2],val[3]))
                     except:
                         await message.channel.send("Please enter a valid county and state.")
-
+                #case for if state is more than one word
                 elif len(val) > 4:
                     for i in range(3,len(val)) : 
                         statecontent.append(val[i]) 
                     statecontent = " ".join(statecontent)
+                    #checks to see if inputted county and state are valid
                     try:
                         await message.channel.send(csvcountyread(val[2],statecontent))
                     except:
                         await message.channel.send("Please enter a valid county and state.")
-
+        #command for retrieving state data
         elif val[1] == "state":
+            #command for plotting state data
             if val[2] == "plot":
+                #case for if the state is one word
                 if len(val) == 4:
                     csvstateplot(val[3])
+                    #checks to see if a plot has been generated
                     if path.exists('plot.png'):
                         await message.channel.send(file=discord.File('plot.png'))
                     else:
                     #if no data is found for entered country 
                         await message.channel.send("No statistics for " + capitalize(val[3]) + ".")
-
+                #case for if the state is more than one word
                 elif len(val) > 4:
                     for i in range(3,len(val)):
                         statecontent.append(val[i]) 
@@ -369,13 +382,16 @@ async def on_message(message):
                         await message.channel.send(file=discord.File('plot.png'))
                     else:
                         await message.channel.send("Please enter a valid state.")
+            #case for outputted state information
             else:
+                #case for if state is one word
                 if len(val) == 3:
+                    #checks to see if inputted state is valid
                     try:
                         await message.channel.send(csvstateread(val[2]))
                     except:
                         await message.channel.send("Please enter a valid state.")
-
+                #case for if state is more than one word
                 elif len(val) > 3:
                     for i in range(2,len(val)):
                         statecontent.append(val[i]) 
