@@ -37,7 +37,7 @@ def csvcountyread(county,state):
                     if row[2] == state:
                             cases = int(row[4])
                             deaths = int(row[5])
-                            return "State: " + state + "\n" + "County: " + county + "\n" + "Active Cases: " + format (cases, ',d') + "\n" + "Deaths: " + format (deaths, ',d')
+                            return "State: " + state + "\n" + "County: " + county + "\n" + "Total Cases: " + format (cases, ',d') + "\n" + "Deaths: " + format (deaths, ',d')
 
 #reads in data from state file and filters dependent on inputted state
 def csvstateread(state):
@@ -50,7 +50,7 @@ def csvstateread(state):
                 if row[1] == state:
                     cases = int(row[3])
                     deaths = int(row[4])
-                    return "State: " + state + "\n" + "Active Cases: " + format (cases, ',d') + "\n" + "Deaths: " + format (deaths, ',d')
+                    return "State: " + state + "\n" + "Total Cases: " + format (cases, ',d') + "\n" + "Deaths: " + format (deaths, ',d')
 
 #plots data dpending on which state is inputted
 def csvstateplot(state):
@@ -87,7 +87,7 @@ def csvstateplot(state):
                 plt.clf()
                 fig, ax1 = plt.subplots()
                 #plots data
-                ax1.plot(dates,cases[-30:], label = "Currently Infected")
+                ax1.plot(dates,cases[-30:], label = "Infected")
                 ax1.plot(dates,deaths[-30:], label = "Deaths")
                 plt.title("Coronavirus in " + state + " for the last 30 days")
                 fig.autofmt_xdate()
@@ -142,7 +142,7 @@ def csvcountyplot(county,state):
                 plt.clf()
                 fig, ax1 = plt.subplots()
                 #plots data
-                ax1.plot(dates,cases[-30:], label = "Currently Infected")
+                ax1.plot(dates,cases[-30:], label = "Infected")
                 ax1.plot(dates,deaths[-30:], label = "Deaths")
                 plt.title("Coronavirus in " + county + " County " + state + " for the last 30 days")
                 fig.autofmt_xdate()
@@ -253,7 +253,7 @@ def plotter(country):
 
         #converts data in date format for last 30 days
         xaxisdates = mdates.num2date(mdates.datestr2num(dates[-30:]))
-        ax1.plot(xaxisdates,confirms[-30:], label = "Currently Infected")
+        ax1.plot(xaxisdates,confirms[-30:], label = "Infected")
         ax1.plot(xaxisdates,recovers[-30:], label = "Recovered")
         ax1.plot(xaxisdates,deaths[-30:], label = "Deaths")
         plt.title("Coronavirus in " + countrycap + " for the last 30 days")
