@@ -7,80 +7,95 @@ from bs4 import BeautifulSoup as soup
 #Makes loop infinite
 while True:
 
-    # URL for country data
-    url = 'https://pomber.github.io/covid19/timeseries.json'
-    
-    # Connect to the URL
-    uClient = uReq(url)
-    page_html = uClient.read()
-    uClient.close()
-    
-    #set html parsing
-    page_soup = soup(page_html,"html.parser")
-    
-    #opens .txt file for temp data storage
-    file = open("datastorage.txt","w")
-    
-    #clears contents of file
-    file.truncate()
-    
-    #writes data to .txt file
-    file.write(str(page_soup))
+    try:
 
-    #closes file
-    file.close()
+        # URL for country data
+        url = 'https://pomber.github.io/covid19/timeseries.json'
+        
+        # Connect to the URL
+        uClient = uReq(url)
+        page_html = uClient.read()
+        uClient.close()
+        
+        #set html parsing
+        page_soup = soup(page_html,"html.parser")
+        
+        #opens .txt file for temp data storage
+        file = open("datastorage.txt","w")
+        
+        #clears contents of file
+        file.truncate()
+        
+        #writes data to .txt file
+        file.write(str(page_soup))
 
+        #closes file
+        file.close()
 
-    # URL for US county data
-    url = 'https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv'
-    
-    # Connect to the URL
-    uClient = uReq(url)
-    page_html = uClient.read()
-    uClient.close()
-    
-    #set html parsing
-    page_soup = soup(page_html,"html.parser")
-    
-    #opens .txt file for temp data storage
-    file = open("countydata.txt","w")
-    
-    #clears contents of file
-    file.truncate()
-    
-    #writes data to .txt file
-    file.write(str(page_soup))
+        #for debugging
+        print("Country data read success")
+        
+        # URL for US county data
+        url = 'https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv'
+        
+        # Connect to the URL
+        uClient = uReq(url)
+        page_html = uClient.read()
+        uClient.close()
+        
+        #set html parsing
+        page_soup = soup(page_html,"html.parser")
+        
+        #opens .txt file for temp data storage
+        file = open("countydata.txt","w")
+        
+        #clears contents of file
+        file.truncate()
+        
+        #writes data to .txt file
+        file.write(str(page_soup))
 
-    #closes file
-    file.close()
+        #closes file
+        file.close()
 
-    #URL for state data
-    url = "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv"
+        #for debugging
+        print("County data read success")
 
-    # Connect to the URL
-    uClient = uReq(url)
-    page_html = uClient.read()
-    uClient.close()
-    
-    #set html parsing
-    page_soup = soup(page_html,"html.parser")
-    
-    #opens .txt file for temp data storage
-    file = open("statedata.txt","w")
-    
-    #clears contents of file
-    file.truncate()
-    
-    #writes data to .txt file
-    file.write(str(page_soup))
+        #URL for state data
+        url = "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv"
 
-    #closes file
-    file.close()
+        # Connect to the URL
+        uClient = uReq(url)
+        page_html = uClient.read()
+        uClient.close()
+        
+        #set html parsing
+        page_soup = soup(page_html,"html.parser")
+        
+        #opens .txt file for temp data storage
+        file = open("statedata.txt","w")
+        
+        #clears contents of file
+        file.truncate()
+        
+        #writes data to .txt file
+        file.write(str(page_soup))
 
-    #for debugging
-    now = datetime.now()
-    print("File read at:",now)
-    
-    #delays data capture by 1 hour
-    time.sleep(3600)
-    
+        #closes file
+        file.close()
+
+        #for debugging
+        print("State data read success")
+
+        #for debugging
+        now = datetime.now()
+        print("Files read at:",now)
+        
+        #delays data capture by 1 hour
+        time.sleep(3600)
+
+    except:
+        print("Error detected restarting...")
+        pass
+    else:
+        break
