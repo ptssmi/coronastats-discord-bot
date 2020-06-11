@@ -1,5 +1,6 @@
 # Import libraries
 import time
+import logging
 from datetime import datetime
 from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup
@@ -95,7 +96,8 @@ while True:
         time.sleep(3600)
 
     except:
-        print("Error detected restarting...")
+        #prints error message
+        logging.exception("message")
         pass
     else:
         break
