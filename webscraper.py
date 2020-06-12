@@ -93,11 +93,10 @@ while True:
         print("Files read at:",now)
         
         #delays data capture by 1 hour
-        time.sleep(3600)
+        time.sleep(2)
 
     except:
         #prints error message
         logging.exception("message")
         pass
-    else:
-        break
+
