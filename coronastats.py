@@ -97,6 +97,7 @@ def csvstateplot(state):
                 plt.legend()
                 #saves plot to .png file
                 plt.savefig("plot.png")
+                plt.close()
             except:
                 try:
                     os.remove("plot.png")
@@ -152,6 +153,7 @@ def csvcountyplot(county,state):
                 plt.legend()
                 #saves plot to .png file
                 plt.savefig("plot.png")
+                plt.close()
             except:
                 try:
                     os.remove("plot.png")
@@ -265,6 +267,7 @@ def plotter(country):
         plt.legend()  
         #saves plot to .png file
         plt.savefig("plot.png")
+        plt.close()
 
     #if no data for country exits
     except:
