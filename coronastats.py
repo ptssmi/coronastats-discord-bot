@@ -173,6 +173,11 @@ def statsgrabber(country):
     except:
         return "Invalid"
 
+#function for retreiving Univeristy of Cincinnati data
+def ucstatgrabber():
+    f = open("ucdata.txt", "r")
+    return f.read()
+
 #function for formatting diplayed message
 def formatter(country, stats):
     country = specialcases(country)
@@ -280,7 +285,7 @@ def plotter(country):
 
 #function for displaying help menu
 def helper():
-    output = "**Commands:** ```!coronastats => generates statistics with default country as US``````!coronastats (country) => generates statistics for given country``````!coronastats state (state) => generates statistics for given state``````!coronastats state plot (state) => generates a plot of the last thirty days for the``````!coronastats county (county) (state) => generates statistics for the given county and state``````!coronastats county plot (county) (state) => generates plot for the last thirty days of the given county and state``````!coronastats plot => generates plot of last thirty days with default country as US``````!coronastats plot (country) => generates plot for last thirty days for the given country```"
+    output = "**Commands:** ```!coronastats => generates statistics with default country as US``````!coronastats uc => generates statistics for The University of Cincinnati``````!coronastats (country) => generates statistics for given country``````!coronastats state (state) => generates statistics for given state``````!coronastats state plot (state) => generates a plot of the last thirty days for the``````!coronastats county (county) (state) => generates statistics for the given county and state``````!coronastats county plot (county) (state) => generates plot for the last thirty days of the given county and state``````!coronastats plot => generates plot of last thirty days with default country as US``````!coronastats plot (country) => generates plot for last thirty days for the given country```"
     return output
 
 @client.event
@@ -403,7 +408,8 @@ async def on_message(message):
                         await message.channel.send(csvstateread(statecontent))
                     except:
                         await message.channel.send("Please enter a valid state.")
-
+        elif val[1] == 'uc':
+            await message.channel.send("**University of Cincinnati Cases: **" +  ucstatgrabber())
         #prints stats for inputted country
         else:
             for i in range(1,len(val)) : 
