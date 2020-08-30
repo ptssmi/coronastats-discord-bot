@@ -11,33 +11,35 @@ ucdata = []
 
 url = 'https://www.uc.edu/publichealth/covid-19-dashboard.html'
 
-# Connect to the URL
-uClient = uReq(url)
-page_html = uClient.read()
-uClient.close()
+while True:
 
-#set html parsing
-page_soup = soup(page_html,'html.parser')
+    # Connect to the URL
+    uClient = uReq(url)
+    page_html = uClient.read()
+    uClient.close()
 
-#grabs the data from the webpage
-for row in page_soup.table.find_all('tr')[1:]:
-    data = (str(row.td.text))
-    ucdata.append(data)
+    #set html parsing
+    page_soup = soup(page_html,'html.parser')
 
-file = open('ucdata.txt','w')
-#clears contents of the file
-file.truncate()
-#writes data to .txt file
-file.write(ucdata[0])
-#closes file
-file.close()
+    #grabs the data from the webpage
+    for row in page_soup.table.find_all('tr')[1:]:
+        data = (str(row.td.text))
+        ucdata.append(data)
 
-#for debugging
-now = datetime.now()
-print('Data read at: ',now)
+    file = open('ucdata.txt','w')
+    #clears contents of the file
+    file.truncate()
+    #writes data to .txt file
+    file.write(ucdata[0])
+    #closes file
+    file.close()
 
-#sleep for a day
-time.sleep(86400)
+    #for debugging
+    now = datetime.now()
+    print('Data read at: ',now)
+
+    #sleep for a day
+    time.sleep(86400)
 
 
 
