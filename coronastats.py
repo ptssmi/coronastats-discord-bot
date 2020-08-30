@@ -409,7 +409,10 @@ async def on_message(message):
                     except:
                         await message.channel.send("Please enter a valid state.")
         elif val[1] == 'uc':
-            await message.channel.send("**University of Cincinnati Cases: **" +  ucstatgrabber())
+            try:
+                await message.channel.send("**University of Cincinnati Cases: **" +  ucstatgrabber())
+            except:
+                await message.channel.send("No data for The University of Cincinnati.")
         #prints stats for inputted country
         else:
             for i in range(1,len(val)) : 
