@@ -3,34 +3,33 @@ import time
 import logging
 import smtplib
 from datetime import datetime
-from urllib.request import urlopen as uReq
-from bs4 import BeautifulSoup as soup
+import pandas as pd
+import requests
 
-
-ucdata = []
 
 url = 'https://www.uc.edu/publichealth/covid-19-dashboard.html'
 
 while True:
 
-    # Connect to the URL
-    uClient = uReq(url)
-    page_html = uClient.read()
-    uClient.close()
+    r = requests.get(url)
+    df_list = pd.read_html(r.text) # this parses all the tables in webpages to a list
+    df = df_list[0]
+    df2 = df_list[1]
+    data = df.values
+    housingdata = df2.values
 
-    #set html parsing
-    page_soup = soup(page_html,'html.parser')
-
-    #grabs the data from the webpage
-    for row in page_soup.table.find_all('tr')[1:]:
-        data = (str(row.td.text))
-        ucdata.append(data)
+    students = data[0,1]
+    employees = data[1,1]
+    visitors = data[2,1]
+    total_cases = data[3,1]
+    housingcases = housingdata[0,1]
+    offcampuscases = housingdata[1,1]
 
     file = open('ucdata.txt','w')
     #clears contents of the file
     file.truncate()
     #writes data to .txt file
-    file.write(ucdata[0])
+    file.write(str(students)+'\n'+str(employees)+'\n'+str(visitors)+'\n'+str(total_cases)+'\n'+str(housingcases)+'\n'+str(offcampuscases)+'\n')
     #closes file
     file.close()
 
@@ -40,6 +39,7 @@ while True:
 
     #sleep for a day
     time.sleep(86400)
+
 
 
 

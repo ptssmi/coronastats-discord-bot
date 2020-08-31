@@ -11,6 +11,7 @@ import os
 from os import path
 import csv
 import numpy as np
+import pandas as pd
 
 #reads in token from .txt file
 token = open("token.txt", "r").read()
@@ -175,8 +176,10 @@ def statsgrabber(country):
 
 #function for retreiving Univeristy of Cincinnati data
 def ucstatgrabber():
-    f = open("ucdata.txt", "r")
-    return f.read()
+    f = open('ucdata.txt')
+    lines = f.readlines()
+    output = 'Student Cases: ' + lines[0] + 'On Campus Housing Cases: ' + lines[4] + 'Off Campus Housing Cases: ' + lines[5] + 'Employee Cases: ' + lines[1] + 'Visitor Cases: ' + lines[2] +  '**Total Cases: **'+ lines[3]
+    return output
 
 #function for formatting diplayed message
 def formatter(country, stats):
@@ -410,7 +413,7 @@ async def on_message(message):
                         await message.channel.send("Please enter a valid state.")
         elif val[1] == 'uc':
             try:
-                await message.channel.send("**University of Cincinnati Cases: **" +  ucstatgrabber())
+                await message.channel.send("University of Cincinnati: " + '\n' +  ucstatgrabber())
             except:
                 await message.channel.send("No data for The University of Cincinnati.")
         #prints stats for inputted country
