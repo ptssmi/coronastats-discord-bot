@@ -34,7 +34,7 @@ while True:
     #clears contents of the file
     file.truncate()
     #writes data to .txt file
-    file.write(str(students)+str(employees)+str(visitors)+str(total_cases)+str(housingcases)+'\n'+str(offcampuscases)+'\n')
+    file.write(str(students)+str(employees)+'\n'+str(visitors)+'\n'+str(total_cases)+'\n'+str(housingcases)+'\n'+str(offcampuscases)+'\n')
     #closes file
     file.close()
 
